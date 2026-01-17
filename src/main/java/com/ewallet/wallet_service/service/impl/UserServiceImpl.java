@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.ewallet.wallet_service.service.AuditLogService; // Import this
 
 import java.math.BigDecimal;
 
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final WalletRepository walletRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final AuditLogService auditLogService; // 1. Inject Service
 
     // =============================
     // CREATE USER + WALLET
@@ -62,19 +64,52 @@ public class UserServiceImpl implements UserService {
     // =============================
     // LOGIN
     // =============================
+    // @Override
+    // public AuthResponse login(LoginRequest request) {
+
+    //     User user = userRepository.findByEmail(request.getEmail())
+    //             .orElseThrow(() ->
+    //                     new InvalidRequestException("Invalid email or password")
+    //             );
+
+    //     if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+    //         throw new InvalidRequestException("Invalid email or password");
+    //     }
+
+    //     String token = jwtUtil.generateToken(user.getEmail());
+    //     return new AuthResponse(token);
+    // }
+
     @Override
     public AuthResponse login(LoginRequest request) {
+        // Find user first to log their ID even if password fails
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() ->
-                        new InvalidRequestException("Invalid email or password")
-                );
+        try {
+            if (user == null) {
+                throw new InvalidRequestException("Invalid email or password");
+            }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidRequestException("Invalid email or password");
+            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                // CHANGED: Removed extra null argument
+                auditLogService.log(user, "LOGIN", "FAILURE", null, null);
+                throw new InvalidRequestException("Invalid email or password");
+            }
+
+            // CHANGED: Removed extra null argument
+            auditLogService.log(user, "LOGIN", "SUCCESS", null, null);
+
+            String token = jwtUtil.generateToken(user.getEmail());
+            return new AuthResponse(token);
         }
 
-        String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token);
+// ... catch block ...
+            catch (Exception e) {
+            if (user != null && !(e instanceof InvalidRequestException)) {
+                // CHANGED: Removed extra null argument
+                auditLogService.log(user, "LOGIN", "FAILURE", null, null);
+            }
+            throw e;
+        }
     }
 }

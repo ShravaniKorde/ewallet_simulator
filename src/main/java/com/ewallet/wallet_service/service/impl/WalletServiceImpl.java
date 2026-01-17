@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.ewallet.wallet_service.service.AuditLogService; // Import this
 
 @Service
 @Transactional
@@ -28,17 +29,20 @@ public class WalletServiceImpl implements WalletService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final BalanceWebSocketService balanceWebSocketService;
+    private final AuditLogService auditLogService; // 1. Inject Service
 
     public WalletServiceImpl(
             WalletRepository walletRepository,
             TransactionRepository transactionRepository,
             UserRepository userRepository,
-            BalanceWebSocketService balanceWebSocketService
+            BalanceWebSocketService balanceWebSocketService,
+            AuditLogService auditLogService // 2. Add to constructor
     ) {
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.balanceWebSocketService = balanceWebSocketService;
+        this.auditLogService = auditLogService;
     }
 
     // =============================
@@ -88,6 +92,11 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Target wallet not found")
                 );
+                // Capture state for logging
+        BigDecimal senderOldBal = fromWallet.getBalance();
+        BigDecimal receiverOldBal = toWallet.getBalance();
+
+        try{
 
         if (fromWallet.getId().equals(toWalletId)) {
             throw new IllegalArgumentException("Cannot transfer to same wallet");
@@ -116,6 +125,27 @@ public class WalletServiceImpl implements WalletService {
 
         transactionRepository.save(tx);
 
+        // --- AUDIT LOGGING START ---
+            
+            // 1. Log Sender (TRANSFER)
+            auditLogService.log(
+                fromWallet.getUser(), 
+                "TRANSFER", 
+                "SUCCESS", 
+                senderOldBal, 
+                fromWallet.getBalance()
+            );
+
+            // 2. Log Receiver (RECEIVE)
+            auditLogService.log(
+                toWallet.getUser(), 
+                "RECEIVE", 
+                "SUCCESS", 
+                receiverOldBal, 
+                toWallet.getBalance()
+            );
+            // --- AUDIT LOGGING END ---
+
         // 🔥 REAL-TIME BALANCE UPDATES
         balanceWebSocketService.publishBalance(
                 fromWallet.getId(),
@@ -126,7 +156,18 @@ public class WalletServiceImpl implements WalletService {
                 toWallet.getId(),
                 toWallet.getBalance()
         );
-    }
+    }catch (Exception e) {
+            // Log Failure for Sender
+            auditLogService.log(
+                fromWallet.getUser(), 
+                "TRANSFER", 
+                "FAILURE", 
+                senderOldBal, 
+                senderOldBal
+            );
+            throw e; // Rethrow to rollback DB transaction
+        }
+}
 
     // =============================
     // MY TRANSACTION HISTORY
