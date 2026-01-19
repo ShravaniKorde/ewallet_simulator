@@ -70,14 +70,13 @@ A **Full-Stack E-Wallet application** implementing **secure digital wallet opera
 
 ---
 
-### 🧪 Robust Testing
-
-* JUnit tests for:
-
+### 🧪 Robust Testing & Quality Assurance
+* **Unit Testing with Mockito**: Dependencies are mocked to test service logic in isolation, ensuring fast and reliable test execution.
+* **Code Coverage with JaCoCo**: Integrated JaCoCo to track and maintain high testing standards.
+* Comprehensive test cases for:
   * Context loading
-  * Transaction safety
-  * Validation
-* ACID properties verified through manual + automated testing
+  * Transaction safety & ACID properties
+  * Validation & Exception handling
 
 ---
 
@@ -103,7 +102,8 @@ A **Full-Stack E-Wallet application** implementing **secure digital wallet opera
 * MySQL (Dockerized)
 * WebSockets
 * Lombok
-* JUnit 5
+* JUnit 5 & Mockito (Testing & Mocking)
+* JaCoCo (Code Coverage Tooling)
 
 ### Frontend
 
@@ -189,18 +189,25 @@ npm run dev
 
 ---
 
-## 🧪 Running Tests
+## 🧪 Testing & Quality Reports
 
+* Run Unit Tests:
 
-cd backend
-./gradlew test
+  cd backend
+  ./gradlew clean test
+
+* Generate JaCoCo Coverage Report:
+
+  ./gradlew jacocoTestReport
 
 
 ### 📊 Test Report
 
-Open in browser:
+* View Reports in Browser:
 
-backend/build/reports/tests/test/index.html
+  * Test Summary: backend/build/reports/tests/test/index.html
+
+  * Coverage Detail: backend/build/reports/jacoco/test/html/index.html
 
 
 ---
