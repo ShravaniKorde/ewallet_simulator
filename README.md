@@ -124,7 +124,6 @@ A **Full-Stack E-Wallet application** implementing **secure digital wallet opera
 
 ## 📂 Project Structure
 
-```text
 ewallet_simulator/
 ├── backend/
 │   ├── src/main/java/com/ewallet/wallet_service/
@@ -136,11 +135,16 @@ ewallet_simulator/
 │   │   ├── websocket/
 │   │   ├── security/
 │   │   └── exception/
-│   ├── src/test/
-│   ├── application.properties
-│   ├── .env
+│   ├── src/test/java/com/ewallet/wallet_service/
+│   │   ├── controller/
+│   │   ├── service/
+│   │   ├── security/
+│   │   ├── websocket/
+│   │   └── config/
+│   ├── Dockerfile
 │   ├── build.gradle
-│   └── docker-compose.yml
+│   └── application.properties
+│
 ├── frontend/
 │   ├── src/
 │   │   ├── pages/
@@ -148,44 +152,35 @@ ewallet_simulator/
 │   │   ├── auth/
 │   │   ├── websocket/
 │   │   └── api/
-│   ├── index.css
+│   ├── Dockerfile
 │   └── package.json
+│
 ├── Screenshots/
-├── Video_Walkthrough/
-└── README.md
-```
+│   ├── Terminal Outputs/
+│   └── UI Screens/
+│
+├── docker-compose.yml
+├── README.md
+└── video_overview.mp4
+
 ---
 
-## 🐳 MySQL Setup (Docker)  : 📄 docker-compose.yml
+## 🐳 Running the Application (Docker)
 
-### ▶️ Start MySQL
+▶️ One-Command Startup : docker compose up -d
 
-```bash
-docker compose up -d
-
-```
 ---
 
 ## 🚀 Running the Application
 
 ### 1️⃣ Backend
 
-```bash
-cd backend
-./gradlew bootRun or ./gradlew clean built bootrun
-```
 * API: [http://localhost:8080]
 * Swagger UI: [http://localhost:8080/swagger-ui.html]
 
 ---
 
 ### 2️⃣ Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
 
 * App: [http://localhost:5173]
 
@@ -195,14 +190,13 @@ npm run dev
 
 * Run Unit Tests:
 
-```bash
   cd backend
   ./gradlew clean test
-```
+
 * Generate JaCoCo Coverage Report:
-```bash
+
   ./gradlew jacocoTestReport
-```
+
 
 ### 📊 Test Report
 

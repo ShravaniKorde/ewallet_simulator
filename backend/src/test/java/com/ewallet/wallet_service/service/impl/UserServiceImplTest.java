@@ -1,4 +1,4 @@
-package com.ewallet.wallet_service.service;
+package com.ewallet.wallet_service.service.impl;
 
 import com.ewallet.wallet_service.dto.request.LoginRequest;
 import com.ewallet.wallet_service.dto.request.UserCreateRequest;
@@ -9,7 +9,8 @@ import com.ewallet.wallet_service.exception.InvalidRequestException;
 import com.ewallet.wallet_service.repository.UserRepository;
 import com.ewallet.wallet_service.repository.WalletRepository;
 import com.ewallet.wallet_service.security.JwtUtil;
-import com.ewallet.wallet_service.service.impl.UserServiceImpl;
+import com.ewallet.wallet_service.service.AuditLogService;
+//import com.ewallet.wallet_service.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
