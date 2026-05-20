@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: backend
+  namespace: ewallet
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: backend
+
+  template:
+    metadata:
+      labels:
+        app: backend
+
+    spec:
+      containers:
+      - name: backend
+
+        image: ewallet_simulator-backend
+
+        imagePullPolicy: Never
+
+        ports:
+        - containerPort: 8080
+
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://mysql:3306/ewallet
+
+        - name: SPRING_DATASOURCE_USERNAME
+          value: 
+
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: 

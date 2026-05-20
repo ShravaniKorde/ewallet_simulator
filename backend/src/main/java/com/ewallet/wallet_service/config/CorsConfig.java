@@ -18,7 +18,8 @@ public class CorsConfig {
 
         // 🔥 Frontend origin
         config.setAllowedOrigins(List.of(
-                "http://localhost:5173"   // Vite React
+                "http://localhost:5173",  // Vite React
+                "http://localhost:30080"   
         ));
 
         config.setAllowedMethods(List.of(
