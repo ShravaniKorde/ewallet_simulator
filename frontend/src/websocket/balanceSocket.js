@@ -20,7 +20,7 @@ export const connectBalanceSocket = (walletId, onBalanceUpdate) => {
     return;
   }
 
-  const socket = new SockJS("http://localhost:8080/ws");
+  const socket = new SockJS("/ws");
 
   stompClient = new Client({
     webSocketFactory: () => socket,
