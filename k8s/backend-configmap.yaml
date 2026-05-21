@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: backend-config
+  namespace: ewallet
+
+data:
+  SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ewallet
+  SPRING_DATASOURCE_USERNAME: 
