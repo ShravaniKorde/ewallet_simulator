@@ -29,6 +29,7 @@ public class SecurityConfig {
                         "/ws/**",                 // WebSocket
                         "/api/auth/**",
                         "/api/setup/**",
+                        "/actuator/health",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/v3/api-docs/**"

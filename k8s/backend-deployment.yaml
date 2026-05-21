@@ -19,21 +19,34 @@ spec:
 
     spec:
       containers:
-      - name: backend
+        - name: backend
 
-        image: ewallet_simulator-backend
+          image: ewallet_simulator-backend
 
-        imagePullPolicy: Never
+          imagePullPolicy: Never
 
-        ports:
-        - containerPort: 8080
+          ports:
+            - containerPort: 8080
 
-        env:
-        - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://mysql:3306/ewallet
+          envFrom:
+            - configMapRef:
+                name: backend-config
 
-        - name: SPRING_DATASOURCE_USERNAME
-          value: 
+            - secretRef:
+                name: mysql-secret
 
-        - name: SPRING_DATASOURCE_PASSWORD
-          value: 
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            failureThreshold: 60
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 10
