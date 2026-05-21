@@ -1,5 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: mysql
   namespace: ewallet
@@ -18,16 +19,27 @@ spec:
 
     spec:
       containers:
-      - name: mysql
+        - name: mysql
+          image: mysql:8.0
 
-        image: mysql:8.0
+          ports:
+            - containerPort: 3306
 
-        ports:
-        - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
 
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: 
+            - name: MYSQL_DATABASE
+              value: ewallet
 
-        - name: MYSQL_DATABASE
-          value: ewallet
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+
+      volumes:
+        - name: mysql-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
