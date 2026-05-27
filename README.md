@@ -1,4 +1,3 @@
-
 # 💳 E-Wallet Simulator
 
 A **Full-Stack E-Wallet application** implementing **secure digital wallet operations** with **ACID-compliant transactions**, **real-time balance updates**, **audit logging**, and a **modern responsive UI**.
@@ -115,12 +114,67 @@ A **Full-Stack E-Wallet application** implementing **secure digital wallet opera
 
 ### DevOps / Tools
 
-* Docker (MySQL only)
+* Docker
+* Kubernetes
 * Gradle
 * Swagger UI
 * Git & GitHub
 
 ---
+
+## ☸️ Kubernetes Deployment
+
+The application is also containerized and deployed using **Kubernetes** with production-inspired architecture.
+
+### Kubernetes Features Implemented
+
+* **Deployments**
+  * Backend, Frontend, and MySQL managed through Kubernetes Deployments
+  * Automatic pod recreation on failure
+
+* **Services**
+  * Frontend exposed using **NodePort**
+  * Backend exposed using **NodePort**
+  * MySQL exposed internally using **ClusterIP**
+
+* **ConfigMap**
+  * Externalized backend configuration
+  * Database connection URL managed separately from code
+
+* **Secrets**
+  * Sensitive database credentials managed using Kubernetes Secrets
+  * Environment variable injection at runtime
+
+* **PersistentVolumeClaim (PVC)**
+  * Persistent MySQL storage
+  * Data remains intact even after MySQL pod restart
+
+* **Health Monitoring**
+  * **Startup Probe** for safe Spring Boot startup
+  * **Readiness Probe** to ensure backend receives traffic only after healthy initialization
+
+* **Built-in Cluster Networking**
+  * Backend communicates with MySQL internally using Kubernetes service discovery (`mysql:3306`)
+
+---
+
+### Kubernetes Architecture
+
+```text
+Frontend (NodePort : 30080)
+        ↓
+Backend (NodePort : 30081)
+        ↓
+Backend Pod
+   ↓ ConfigMap
+   ↓ Secret
+        ↓
+MySQL Service (ClusterIP)
+        ↓
+MySQL Pod
+        ↓
+PersistentVolumeClaim
+```
 
 ## 📂 Project Structure
 
@@ -153,6 +207,18 @@ ewallet_simulator/
 │   ├── Dockerfile
 │   └── package.json
 │
+├── k8s/
+│   ├── namespace.yaml
+│   ├── backend-configmap.yaml
+│   ├── backend-deployment.yaml
+│   ├── backend-service.yaml
+│   ├── frontend-deployment.yaml
+│   ├── frontend-service.yaml
+│   ├── mysql-deployment.yaml
+│   ├── mysql-service.yaml
+│   ├── mysql-secret.yaml
+│   └── mysql-pvc.yaml
+│
 ├── Screenshots/
 ├── docker-compose.yml
 ├── video_overview.mp4
@@ -163,7 +229,11 @@ ewallet_simulator/
 
 ## 🐳 Running the Application (Docker)
 
-▶️ One-Command Startup : docker compose up -d
+### ▶️ One-Command Startup : 
+
+```bash
+docker compose up -d
+```
 
 ---
 
@@ -171,37 +241,113 @@ ewallet_simulator/
 
 ### 1️⃣ Backend
 
-* API: [http://localhost:8080]
-* Swagger UI: [http://localhost:8080/swagger-ui.html]
+* API:
+```text
+[http://localhost:8080]
+```
+
+* Swagger UI:
+```text
+[http://localhost:8080/swagger-ui.html]
+```
 
 ---
 
 ### 2️⃣ Frontend
 
-* App: [http://localhost:5173]
+```text
+[http://localhost:5173]
+```
 
 ---
+
+## ☸️ Running the Application (Kubernetes)
+
+### 1️⃣ Enable Kubernetes
+
+Ensure Kubernetes cluster is running and `kubectl` is configured.
+
+---
+
+### 2️⃣ Build Docker Images
+
+```bash
+docker compose build
+```
+
+---
+
+### 3️⃣ Apply Kubernetes Resources
+
+```bash
+kubectl apply -f k8s/
+```
+
+---
+
+### 4️⃣ Verify Pods
+
+```bash
+kubectl get pods -n ewallet
+```
+
+Expected:
+
+```text
+backend-xxxxx    1/1 Running
+frontend-xxxxx   1/1 Running
+mysql-xxxxx      1/1 Running
+```
+
+---
+
+### 5️⃣ Access Application
+
+#### Frontend
+
+```text
+http://localhost:30080
+```
+
+#### Backend Swagger UI
+
+```text
+http://localhost:30081/swagger-ui.html
+```
+
+---
+
 
 ## 🧪 Testing & Quality Reports
 
 * Run Unit Tests:
 
+```bash
   cd backend
   ./gradlew clean test
+```
 
 * Generate JaCoCo Coverage Report:
 
+```bash
   ./gradlew jacocoTestReport
-
+```
 
 ### 📊 Test Report
 
-* View Reports in Browser:
+- View Reports in Browser:
 
-  * Test Summary: backend/build/reports/tests/test/index.html
+  - Test Summary:
 
-  * Coverage Detail: backend/build/reports/jacoco/test/html/index.html
+    ```text
+    backend/build/reports/tests/test/index.html
+    ```
 
+  - Coverage Details:
+
+    ```text
+    backend/build/reports/jacoco/test/html/index.html
+    ```
 
 ---
 
@@ -245,7 +391,7 @@ ewallet_simulator/
 
 ## ✅ Conclusion
 
-This project demonstrates **enterprise-grade transactional integrity**, **real-time systems**, and **secure financial application design**, making it suitable for **academic evaluation, internships, and interviews**.
+This project demonstrates **enterprise-grade transactional integrity**, **real-time systems**, **secure financial application design**,  **containerization with Docker**, and **orchestration using Kubernetes**, making it suitable for **academic evaluation, internships, and interviews**.
 
 ---
 
